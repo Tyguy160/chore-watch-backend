@@ -3,7 +3,6 @@ const { connect } = require('./utils/db');
 const cors = require('cors');
 const { json, urlencoded } = require('body-parser');
 const { userRouter } = require('./resources/user/user.router');
-const { choreRouter } = require('./resources/chore/chore.router');
 
 // Create express app
 const app = express();
@@ -15,8 +14,7 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 
 // Routers
-app.use('/api/user', userRouter);
-app.use('/api/user/chore', choreRouter);
+app.use('/api/users', userRouter);
 
 const start = async () => {
   try {

@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const { choreRouter } = require('../chore/chore.router');
 
 const {
   createUser,
@@ -26,5 +27,7 @@ userRouter.put('/:id', updateUserById);
 // Delete user
 userRouter.delete('/', deleteUsers);
 userRouter.delete('/:id', deleteUserById);
+
+userRouter.use('/:id/chores', choreRouter);
 
 module.exports = { userRouter };

@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const { reminderRouter } = require('../reminder/reminder.router');
 
 const {
   createChore,
@@ -26,5 +27,7 @@ choreRouter.put('/:id', updateChoreById);
 // Delete chore
 choreRouter.delete('/', deleteChores);
 choreRouter.delete('/:id', deleteChoreById);
+
+choreRouter.use('/:id/reminders', reminderRouter);
 
 module.exports = { choreRouter };
