@@ -5,8 +5,8 @@ const isEmpty = (input) => {
     if (
       input === undefined ||
       input === null ||
-      (typeof field === 'string' && field.trim().length === 0) ||
-      (typeof field === 'object' && Object.keys(field).length === 0)
+      (typeof input === 'string' && input.trim().length === 0) ||
+      (typeof input === 'object' && Object.keys(input).length === 0)
     ) {
       empty = true;
     }
