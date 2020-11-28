@@ -21,7 +21,7 @@ userRouter.post('/', createUser);
 
 // Read user
 userRouter.get('/', getUsers);
-userRouter.get('/:id', auth, getUserById);
+userRouter.get('/:id', getUserById);
 
 // Update user
 userRouter.put('/', updateUsers);

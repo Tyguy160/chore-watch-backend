@@ -17,38 +17,51 @@ const createUser = async (req, res) => {
       });
       await newUser.save();
 
-      const payload = {
-        user: {
-          id: newUser._id,
-        },
-      };
+      if (newUser !== null) {
+        req.session.user = {
+          email: newUser.email,
+        };
+        res.status(200).send({ message: 'User created' });
+      } else {
+        return res.status(500).send({
+          message: 'Something went wrong',
+        });
+      }
 
-      jwt.sign(
-        payload,
-        'randomString',
-        {
-          expiresIn: 10000,
-        },
-        (err, token) => {
-          if (err) throw err;
-          res.status(200).json({
-            token,
-          });
-        }
-      );
+      // const payload = {
+      //   user: {
+      //     id: newUser._id,
+      //   },
+      // };
+      // jwt.sign(
+      //   payload,
+      //   'randomString',
+      //   {
+      //     expiresIn: 10000,
+      //   },
+      //   (err, token) => {
+      //     if (err) throw err;
+      //     res.status(200).json({
+      //       token,
+      //     });
+      //   }
+      // );
     } else {
       throw errors;
     }
   } catch (err) {
     if (err.code === 11000) {
+      console.error(err);
       res.status(409).send({
         message: 'A user with that email already exists',
       });
     } else if (err) {
+      console.error(err);
       res.status(400).send({
         message: err,
       });
     } else {
+      console.error(err);
       res.status(500).send({
         message: 'An unknown error occurred. Please try again',
       });
@@ -105,12 +118,13 @@ const deleteUserById = (req, res) => {
 };
 
 const login = async (req, res) => {
+  console.log('Hit the login endpoint');
   try {
+    console.log(req.body);
     const { errors, isValid } = validateInformation(req.body);
 
     if (isValid) {
       const { email, password } = req.body;
-
       let user = await User.findOne({ email });
       if (!user) {
         return res.status(400).send({
@@ -125,25 +139,11 @@ const login = async (req, res) => {
           message: 'User not found or incorrect password',
         });
       }
-      const payload = {
-        user: {
-          id: user._id,
-        },
-      };
 
-      jwt.sign(
-        payload,
-        'randomString',
-        {
-          expiresIn: 3600,
-        },
-        (err, token) => {
-          if (err) throw err;
-          res.status(200).json({
-            token,
-          });
-        }
-      );
+      req.session.user = {
+        email: user.email,
+      };
+      res.status(200).send({ message: 'Logged in' });
     } else {
       return res.status(400).send(errors);
     }
@@ -154,7 +154,12 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  res.status(200).send({ message: 'Logged out' });
+  if (req.session.user) {
+    delete req.session.user;
+    res.status(200).send({ message: 'Logged out' });
+  } else {
+    res.status(500).send({ message: 'Not logged in' });
+  }
 };
 
 module.exports = {
